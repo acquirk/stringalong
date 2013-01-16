@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Untitled Document</title>
+
+<head>
+
+<style type="text/css">
+<!--
+.style1 {font-family: Geneva, Arial, Helvetica, sans-serif;
+font-size:200px;}
+body {font: Geneva, Arial, Helvetica, sans-serif;} 
+-->
+</style>
+
+<SCRIPT LANGUAGE="JavaScript">
+
+window.onerror = null;
+var topMargin = 100;
+var slideTime = 1200;
+var ns6 = (!document.all && document.getElementById);
+var ie4 = (document.all);
+var ns4 = (document.layers);
+function layerObject(id,left) {
+if (ns6) {
+this.obj = document.getElementById(id).style;
+this.obj.left = left;
+return this.obj;
+}
+else if(ie4) {
+this.obj = document.all[id].style;
+this.obj.left = left;
+return this.obj;
+}
+else if(ns4) {
+this.obj = document.layers[id];
+this.obj.left = left;
+return this.obj;
+   }
+}
+function layerSetup() {
+floatLyr = new layerObject('floatLayer', pageWidth * .5);
+window.setInterval("main()", 10)
+}
+function floatObject() {
+if (ns4 || ns6) {
+findHt = window.innerHeight;
+} else if(ie4) {
+findHt = document.body.clientHeight;
+   }
+} 
+function main() {
+if (ns4) {
+this.currentY = document.layers["floatLayer"].top;
+this.scrollTop = window.pageYOffset;
+mainTrigger();
+}
+else if(ns6) {
+this.currentY = parseInt(document.getElementById('floatLayer').style.top);
+this.scrollTop = scrollY;
+mainTrigger();
+} else if(ie4) {
+this.currentY = floatLayer.style.pixelTop;
+this.scrollTop = document.body.scrollTop;
+mainTrigger();
+   }
+}
+function mainTrigger() {
+var newTargetY = this.scrollTop + this.topMargin;
+if ( this.currentY != newTargetY ) {
+if ( newTargetY != this.targetY ) {
+this.targetY = newTargetY;
+floatStart();
+}
+animator();
+   }
+}
+function floatStart() {
+var now = new Date();
+this.A = this.targetY - this.currentY;
+this.B = Math.PI / ( 2 * this.slideTime );
+this.C = now.getTime();
+if (Math.abs(this.A) > this.findHt) {
+this.D = this.A > 0 ? this.targetY - this.findHt : this.targetY + this.findHt;
+this.A = this.A > 0 ? this.findHt : -this.findHt;
+}
+else {
+this.D = this.currentY;
+   }
+}
+function animator() {
+var now = new Date();
+var newY = this.A * Math.sin( this.B * ( now.getTime() - this.C ) ) + this.D;
+newY = Math.round(newY);
+if (( this.A > 0 && newY > this.currentY ) || ( this.A < 0 && newY < this.currentY )) {
+if ( ie4 )document.all.floatLayer.style.pixelTop = newY;
+if ( ns4 )document.layers["floatLayer"].top = newY;
+if ( ns6 )document.getElementById('floatLayer').style.top = newY + "px";
+   }
+}
+function start() {
+if(ns6||ns4) {
+pageWidth = innerWidth;
+pageHeight = innerHeight;
+layerSetup();
+floatObject();
+}
+else if(ie4) {
+pageWidth = document.body.clientWidth;
+pageHeight = document.body.clientHeight;
+layerSetup();
+floatObject();
+   }
+}
+//  End -->
+</script>
+
+</head>
+
+<BODY onLoad="start()">
+
+
+<div id="floatLayer" style="position: absolute; height:200px; width:100%; right:0px; top:1px;z-index: 100"><a href="page2.html"><img src="arrow_prev.png" border="0" align="left"/></a></DIV>
+
+
+
+<table width="800" height="280" border="1" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td><h1 align="center" class="style1">SITE 3</h1></td>
+  </tr>
+  <tr>
+    <td height="48"><p>Things to do:</p>
+      <ol>
+        <li>How do users create weblists?</li>
+        <li>How do users add things?</li>
+      </ol>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>Some more text at the bottom for scrolling. </p></td>
+  </tr>
+</table>
+</body>
+</html>

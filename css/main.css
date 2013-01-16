@@ -1,0 +1,84 @@
+/*
+Theme Name: Stringalong
+Theme URI: http://www.stringalong.me
+Author: Adam Quirk
+Author URI: http://bullemhead.com
+Version: 0.1
+*/
+
+body {
+overflow:hidden;
+font-family: Helvetica, Century Gothic, Arial, sans-serif;
+font-size:12px;
+line-height:14px;
+text-transform:uppercase;
+background: #FFFFFF;
+}
+
+a {
+font-family: Helvetica, Century Gothic, Arial, sans-serif;
+font-size:10px;
+line-height:14px;
+text-transform:uppercase;
+text-decoration:none;
+}
+
+#next {
+	position:absolute;
+	overflow:hidden;
+	right:20px;
+	top:50px;
+	width:140px;
+	height:260px;
+	z-index:999;
+	background:#000000;
+	padding:12px;
+	-moz-opacity: 0.7 !important; 
+	-webkit-opacity: 0.7!important; 
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)" !important; 
+	filter: alpha(opacity=70) !important; 
+	opacity: 0.7 !important;
+}
+
+#next a {
+	color:#FFF;
+	}
+	
+#next a:hover{
+	color:#90bade;
+	}
+
+#next h2 {
+	font: 16px Georgia, "Times New Roman", Times, serif;
+	color:#FFF;
+	}
+#next ol {
+	list-style-position: outside;
+	padding: 0px;
+	margin: 0px;
+	line-height: 10px;
+		}	
+		
+#next li {
+	border-bottom: 1px solid #999999;
+	margin: 0px;
+	padding: 0px;
+	line-height: 10px;
+
+}		
+		
+#start {
+background: url('/images/bg_wood.jpg')
+}
+
+#contact {
+padding: 10px;
+}
+
+#contact h2 {
+font-size: 18px;
+}
+
+#contact h2 a{
+font-size: 18px;
+}

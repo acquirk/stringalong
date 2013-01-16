@@ -1,0 +1,178 @@
+PHP GOBs 
+http://xorengineering.com/release/phpgobs/
+
+How it works:
+Normally all web pages are processed through the index.php file that is included with GOBs. The web pages must have the file extension .html and must be located in the views/ subdirectory.
+
+As an example if you have a simple web page coded in HTML with the file named mypage.html saved in the views/ subdirectory you would call up this page with an URL that looks something like this...
+http://www.mydomain.com/index.php/mypage
+
+Note that the name of the file comes after index.php with a / delimiter and does not include the .html extension.
+
+What this URL will do is load index.php and tell it to look for views/mypage.html, process the file and send the results to the clients web browser.
+
+If a view is not specified in the URL, as in the following two examples, then the default, views/index.html, is loaded.
+http://www.mydomain.com/index.php
+http://www.mydomain.com/
+
+At this point you may be asking yourself why in the world would you call up a webpage that way instead of just pointing the URL directly to the .html file, the reasoning is in the processing the index.php file can perform on the .html files. Since the .html goes through index.php for processing before delivery to the client web browser it now makes it possible to add some custom tags that will provide dynamic web content. Lets look at an example.
+
+We will create a default view that shows the server's current date and time without writing a single line of PHP code, instead we will only write HTML code with a custom gob tag that looks very much like another HTML tag.
+
+The default view is views/index.html so we edit this file and add the following content:
+<html>
+<head>
+<title>server time</title>
+</head>
+<body>
+The server date and time is <gob object='timestamp'>
+</body>
+</html>
+
+When we open this default view in a web browser with the server's URL, i.e. http://www.mydomain.com/, we will something similar to the following...
+
+The server date and time is Thursday May 6, 2010 15:22:00 UTC
+
+And if the page is refreshed the date and time will change with each refresh.
+
+How is this possible without writing a single line of code? It is possible because all the code has already been written and the custom <gob> tag is used to reference this existing code. Here is a detailed explanation of what happens as this page is loaded.
+
+1) User requests http://www.mydomain.com/ with their web browser.
+2) The web server receives the request and seeing no file was requested defaults to index.php.
+3) As index.php is loaded and executed by the web server it in turn sees that a view was not specified by the user so it defaults to the index.html view in the views/ directory.
+4) The index.php code reads the file views/index.html and finds the tag <gob object='timestamp'>.
+5) The index.php code then creates an instance of the timestamp object using the PHP code in objects/timestamp.php.
+6) The new timestamp object that is created checks to see if any parameters were sent to decide what it is supposed to do and with no parameters performs the default operation of presenting the current server date and time.
+7) After processing the timestamp object index.php replaces the tag <gob object='timestamp'> with the date and time string that is returned by the timestamp object.
+8) The processed index.html content with the new date and time results is sent off to the clients web browser and what they see in place of the <gob> tag is the server's date and time.
+
+So the key to the dynamic content is a set of PHP objects in the objects/ directory and calling them with a <gob> tag in an HTML file stored in the views/ directory. There is an existing set of objects that can be used in web pages and a PHP developer can easily create new objects or modify the existing objects to add features that can be called from HTML views.
+
+
+Caveats:
+Processing all the HTML files through index.php does create some challenges when writing HTML files, i.e. creating links between views becomes more complex as you can no longer use something like href="nextpage.html" and instead need something like href="http://www.mydomain.com/index.php/nextpage".
+
+There are some specialized gob objects designed to simplify the process of dealing with the caveats. Two common objects are viewurl and url.
+
+The viewurl object:
+The viewurl object is used to automatically create an URL that points to a view on the web server. As an example suppose we wanted to add a link in the index.html view that leads to a view named nextpage.html. Writing the link manually would look something like the following...
+<a href="http://www.mydomain.com/index.php/nextpage">NextPage</a>
+
+This will work but moving the web site to a new domain will break all these manually written links, so in place of the manually formed URL we use the viewurl gob tag like this...
+<a href="<gob object='viewurl' view='nextpage'>">NextPage</a>
+
+When the index.php script processes this line it will automatically replace the viewurl gob tag with an URL based on the server and path where the script is running. The web site can be moved to a different server or even a subdirectory of the same server and the gob tag will automatically produce to correct URL to ensure the links do not break.
+
+In the case of image files, javascript files and CSS files it is common to use relative paths to load them into a web page. This method will break with the GOBs URL format and we cannot use the viewurl object to form the proper link as they are not views but files we simply want to reference directly rather than through the index.php script.
+
+To link directly to a file on the server we use the url object. Like the viewurl object the url object automatically generates the link based on the domain and path of the web site. As an example assume we want to add an img tag to the index.html view, a manually written tag may look something like the following...
+<img src="http://www.mydomain.com/views/images/stockimage.png">
+
+Again if the web site is moved this link will break, so instead we use the url gob with the following line...
+<img src="<gob object='url' path='views/images/stockimage.png'>">
+
+When index.php processes this line it will automatically replace the gob tag with the approporiate URL.
+
+
+
+Object Help:
+So we have HTML files with <gob> tags that reference objects that perform dynamic tasks and produce content for a web page but how do we know what tags are available and how to use them?
+
+The available objects that can be used in a gob tag are located in the objects/ directory. The PHP developer of each object should include comments inside the .php file that explains the purpose of the object and what parameters it accepts. Anyone proficient in PHP can also discern the objects operation by reviewing the code.
+
+If the comments in the .php file are properly formed there are help objects that are used to automatically generate a list of objects in the objects/ directory and a help page when an object is selected. If a help view already exists in the application for the objects an URL like the following may bring up the objects help page...
+http://www.mydomain.com/index.php/help
+
+If the help view does not exist it can easily be created with the following HTML in a view, simple edit views/help.html and insert...
+<html>
+<head>
+<title>GOB Help Page</title>
+</head>
+<body>
+<gob object='helpselect'>
+</body>
+</html>
+
+Then load the view with the aforementioned URL and like magic you have help pages.
+
+
+
+
+A more elaborate example:
+With the basic of PHP GOBs in hand lets look at an example that is a little more elaborate and shows some convenient features for a web developer.
+
+While still not too complicated lets assume we want a web site with three pages, a default landing page, an about page and a contacts page. Each page has some unique content but they all include the same header, a menu and the same footer.
+
+With static HTML pages these three pages would need to duplicate the header, menu and footer code in all three pages and if a change was needed to the header, menu or footer then it would need to be updated in all three pages. In place of static pages we will use views in PHP GOBs so that the header, menu and footer can be reused across all three pages in effect making it possible to edit one file to update all three views.
+
+First we have to consider the three views we have in mind, index.html which is the default landing page, about.html which says something about our web site and finally contacts.html which shows the personal contact information for our web site.
+
+Now consider that we know each of these views will have a common header, menu and footer so we will also have header.html, menu.html and footer.html.
+
+Lets start with the header. We create and edit the file views/header.html and add the following content...
+<html>
+<head>
+<title>Joe's web site</title>
+<head>
+<body>
+
+Next we create the menu view with links to the three pages by editing the file views/menu.html and add the following content...
+<a href="<gob object='viewurl' view=''>">Home</a> &nbsp;&nbsp; 
+<a href="<gob object='viewurl' view='about'">About</a> &nbsp;&nbsp; 
+<a href="<gob object='viewurl' view='contacts'>">Contacts</a>
+
+Then we create the commong footer view by editing views/footer.html and add the following...
+</body>
+</html>
+
+Now that we have our three common views let string then together in our default view index.html. To do this we will use yet another gob object, loadview. This object is used to incorporate the contents of one view inside another so we edit views/index.html and insert the following...
+<gob object='loadview' name='header'>
+<gob object='loadview' name='menu'>
+<br />
+<br />
+Welcome to Joe's web site, enjoy the stay.
+<gob object='loadview' name='footer'>
+
+At this point we can actually load up our web site into a browser and we should have a web page consisting of the header, a menu across the top with links to the three pages, the default content in index.html and the page footer.
+
+We have not created the other views yet so if we click on the about and contacts links we will get a missing view error as they do not yet exist, so lets create them.
+
+First edit views/about.html and insert the following...
+<gob object='loadview' name='header'>
+<gob object='loadview' name='menu'>
+<br />
+<br />
+Joe's web site is all about Joe.<br />
+Joe updates this web site with stuff that Joe is doing.
+<gob object='loadview' name='footer'>
+
+Next edit views/contacts.html and insert the following...
+<gob object='loadview' name='header'>
+<gob object='loadview' name='menu'>
+<br />
+<br />
+Need to talk to Joe? Call 1-800-GET-1JOE.<br />
+Can't talk now? E-mail Joe at <a href="mailto:joe@joesplace.com">joe@joesplace.com</a>
+<gob object='loadview' name='footer'>
+
+And there we have it, Joe's web site is ready to go. Now to see where GOBs are handy let us suppose we decide to add another page to the site, Joe wants a boating page to specifically highlight his boating interests, we'll use the view boats.html with the following content...
+<gob object='loadview' name='header'>
+<gob object='loadview' name='menu'>
+<br />
+<br />
+Joe likes boating. What has Joe been up to lately on the water?<br />
+June 28th, had the cruiser out on the lake, wow, what a blast!
+<gob object='loadview' name='footer'>
+
+So we now have a boats view but it is not yet accessible on the menu. If these were static pages we would need to edit the menu in all of the pages to add the boats link. But since we are using GOBs we only need to edit menu.html to add the boats link and this will automatically update all the pages that use the menu...
+<a href="<gob object='viewurl' view=''>">Home</a> &nbsp;&nbsp; 
+<a href="<gob object='viewurl' view='boats'>">Boats</a> &nbsp;&nbsp;
+<a href="<gob object='viewurl' view='about'">About</a> &nbsp;&nbsp; 
+<a href="<gob object='viewurl' view='contacts'>">Contacts</a>
+
+And just like that we have a new page on the site and in the menu across all pages.
+
+
+
+Additional help is avaliable from the phpgobs web site, http://xorengineering.com/release/phpgobs/, or you can e-mail Bryan at bnielsen1965@gmail.com.
+

@@ -1,0 +1,38 @@
+<html>
+<head>
+<title>bookmarklet title</title>
+</head>
+<body>
+<a href="javascript:
+function ajaxobject() {
+ try {
+  xmlHttp=new XMLHttpRequest();
+ }
+ catch (e) {
+  try {
+   xmlHttp=new ActiveXObject('Msxml2.XMLHTTP');
+  }
+  catch (e) {
+   try {
+    xmlHttp=new ActiveXObject('Microsoft.XMLHTTP');
+   }
+   catch (e) {
+    alert('Your browser does not support AJAX!');
+    return false;
+   }
+  }
+ }
+ return xmlHttp;
+}
+
+var dnow = new Date();
+var urldate = dnow.getFullYear() + '-' + (dnow.getMonth() + 1) + '-' + dnow.getDate();
+var urltime = dnow.getHours() + ':' + dnow.getMinutes() + ':' + dnow.getSeconds();
+
+plao = ajaxobject();
+plao.onreadystatechange=function() { };
+plao.open('GET', 'display2.php?url=' + escape(document.location) + '&title=' + escape(document.title) + '&urldate=' + escape(urldate) + '&urltime=' + escape(urltime), true);
+plao.send(null);
+">bookmarklet</a>
+</body>
+</html>
